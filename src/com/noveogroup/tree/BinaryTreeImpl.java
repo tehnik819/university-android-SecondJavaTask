@@ -2,12 +2,17 @@ package com.noveogroup.tree;
 
 import com.noveogroup.exception.AlreadyExistException;
 import com.noveogroup.exception.NonExistentElementException;
+import com.noveogroup.model.TreeElem;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-public class BinaryTreeImpl<K extends Comparable<K>, V> implements BinaryTree<K,V> {
+public class BinaryTreeImpl<K extends Comparable<K>, V extends TreeElem> implements BinaryTree<K,V>, Serializable {
 
     private Node<K,V> root;
 
@@ -122,8 +127,27 @@ public class BinaryTreeImpl<K extends Comparable<K>, V> implements BinaryTree<K,
             getListOfValues(list, node.right);
     }
 
+    private void writeObject(ObjectOutputStream out) throws IOException {
+           out.defaultWriteObject();
+           out.writeInt(getNumberOfLeafs(root));
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        System.out.println("Number of Leafs:" + in.readInt());
+    }
+
+    private int getNumberOfLeafs(Node<K,V> node) {
+        if(node == null)
+            return 0;
+        if((node.left == null) && (node.right == null))
+            return 1;
+        else
+            return getNumberOfLeafs(node.left) + getNumberOfLeafs(node.right);
+    }
+
     //Inner class
-    private class Node<K,V> {
+    private class Node<K,V> implements Serializable {
         K key;
         V value;
         Node<K,V> left;

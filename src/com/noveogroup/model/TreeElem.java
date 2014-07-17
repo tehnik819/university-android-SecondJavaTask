@@ -1,6 +1,8 @@
 package com.noveogroup.model;
 
-public class TreeElem implements TreeElement {
+import java.io.Serializable;
+
+public class TreeElem implements TreeElement , Serializable {
     private int id;
 
     public TreeElem(int id) {
