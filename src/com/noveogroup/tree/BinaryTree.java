@@ -1,14 +1,12 @@
 package com.noveogroup.tree;
 
-import com.noveogroup.exception.BinaryTreeException;
+import com.noveogroup.exception.AlreadyExistException;
+import com.noveogroup.exception.NonExistentElementExeption;
 
 import java.util.Iterator;
 
-/**
- * Binary tree interface. Please add your exceptions to methods.
- */
 public interface BinaryTree <K,V> {
-    void addElement(K key, V element) throws BinaryTreeException;
-    void removeElement(K key) throws BinaryTreeException;
+    void addElement(K key, V element) throws AlreadyExistException;
+    void removeElement(K key) throws NonExistentElementExeption;
     Iterator<V> getIterator();
 }
