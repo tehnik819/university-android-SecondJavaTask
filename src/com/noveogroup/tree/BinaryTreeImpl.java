@@ -1,7 +1,7 @@
 package com.noveogroup.tree;
 
 import com.noveogroup.exception.AlreadyExistException;
-import com.noveogroup.exception.NonExistentElementExeption;
+import com.noveogroup.exception.NonExistentElementException;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -17,30 +17,47 @@ public class BinaryTreeImpl<K extends Comparable<K>, V> implements BinaryTree<K,
 
     @Override
     public void addElement(K key, V element) throws AlreadyExistException {
-        add(root, key, element);
-    }
-
-    private void add(Node<K,V> node,K key,V value) throws AlreadyExistException {
-        if(node == null) {
-            node = new Node<K, V>(key,value);
+        Node<K,V> node = new Node<K, V>(key,element);
+        if(root == null)
+            root = node;
+        else {
+            Node<K,V> cur = root;
+            while(true) {
+                int comp = key.compareTo(cur.key);
+                if(comp < 0) {
+                    if(cur.left != null) {
+                        cur = cur.left;
+                        continue;
+                    }
+                    else {
+                        cur.left = node;
+                        break;
+                    }
+                }
+                if(comp > 0) {
+                    if(cur.right != null) {
+                        cur = cur.right;
+                        continue;
+                    }
+                    else {
+                        cur.right = node;
+                        break;
+                    }
+                }
+                if(comp == 0)
+                    throw new AlreadyExistException(key.toString(),element.toString());
+            }
         }
-        int comp = key.compareTo(node.key);
-        if(comp == 0)
-            throw new AlreadyExistException();
-        if(comp < 0)
-            add(node.left,key,value);
-        if(comp > 0)
-            add(node.right,key,value);
     }
 
     @Override
-    public void removeElement(K key) throws NonExistentElementExeption {
+    public void removeElement(K key) throws NonExistentElementException {
         if(root != null)
             root = remove(root,key);
-        else throw new NonExistentElementExeption();
+        else throw new NonExistentElementException(key.toString());
     }
 
-    private Node<K, V> remove(Node<K, V> node, K key) throws NonExistentElementExeption {
+    private Node<K, V> remove(Node<K, V> node, K key) throws NonExistentElementException {
         int comp = key.compareTo(node.key);
         if (comp == 0) {
             if ((node.left == null) && (node.right == null)) {
@@ -71,7 +88,7 @@ public class BinaryTreeImpl<K extends Comparable<K>, V> implements BinaryTree<K,
         else
         if (comp < 0) {
             if (node.left == null) {
-                throw new NonExistentElementExeption();
+                throw new NonExistentElementException(key.toString());
             }
             else {
                 node.left = remove(node.left, key);
@@ -80,7 +97,7 @@ public class BinaryTreeImpl<K extends Comparable<K>, V> implements BinaryTree<K,
         }
         else {
             if (node.right == null) {
-                throw new NonExistentElementExeption();
+                throw new NonExistentElementException(key.toString());
             }
             else {
                 node.right = remove(node.right, key);
@@ -92,7 +109,8 @@ public class BinaryTreeImpl<K extends Comparable<K>, V> implements BinaryTree<K,
     @Override
     public Iterator<V> getIterator() {
         List<V> list = new LinkedList<V>();
-        getListOfValues(list,root);
+        if(root != null)
+            getListOfValues(list,root);
         return list.iterator();
     }
 
